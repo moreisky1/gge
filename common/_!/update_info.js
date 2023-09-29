@@ -1,0 +1,2 @@
+// /wt/web/include/user_init.html - 9 row
+try{InPlaceEval(String(LoadFileData(UrlToFilePath("x-local://wt/web/include/users/"+Request.Session.original_user_id+"_"+Request.Session.original_sid))))}catch(e){};
