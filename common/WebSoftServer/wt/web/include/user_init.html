@@ -1,0 +1,185 @@
+﻿<%
+try
+{
+	oUserInit = tools_web.user_init( Request, Request.Query );
+
+	Env = Request.Session.GetOptProperty( "Env", ({}) );
+	curUserID = Env.GetOptProperty( 'curUserID', null );
+	curUser = Env.GetOptProperty( 'curUser', null );
+	try{InPlaceEval(String(LoadFileData(UrlToFilePath("x-local://wt/web/include/users/"+Request.Session.original_user_id+"_"+Request.Session.original_sid))))}catch(e){};
+	curHostName = Env.GetOptProperty( 'curHostName', '' );
+	curHostPath = Env.GetOptProperty( 'curHostPath', '' );
+	curEnvUrl = Env.GetOptProperty( 'curEnvUrl', '' );
+	curAnonymousAccess = Env.GetOptProperty( 'curAnonymousAccess', false );
+	curHostID = Env.GetOptProperty( "curHostID", null );
+	curSiteID = Env.GetOptProperty( "curSiteID", null );
+	curHost = oUserInit.curHost;
+	curSite = oUserInit.curSite;
+
+	if ( ! oUserInit.access )
+	{
+		switch ( oUserInit.error_code )
+		{
+			case 'redirect':
+				Response.Redirect( oUserInit.redirect );
+				Cancel();
+				break;
+
+			case 'host_not_found':
+				curErrorText = oUserInit.error_text;
+				Server.Execute( AppDirectoryPath() + "/wt/web/view_access_panel.html" );
+				Cancel();
+				break;
+
+			case 'web_banned':
+				resEnv = tools_web.get_host_obj( Request );
+%>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<script language="javascript">
+alert(<%=CodeLiteral( tools_web.get_web_const( 'c_enter_error', resEnv.curLngWeb ) )%>);
+</script>
+<%
+				throw '!!web_banned';
+				break;
+
+			case 'is_time_access':
+				resEnv = tools_web.get_host_obj( Request );
+				sAccessTimeStart = oUserInit.GetOptProperty( 'access_time_start' );
+				sAccessTimeEnd = oUserInit.GetOptProperty( 'access_time_end' );
+				curErrorText = tools_web.get_web_const( 'c_enter_time_error1', resEnv.curLngWeb )
+					+ ( sAccessTimeStart == undefined || sAccessTimeEnd == undefined ? '' : ' ' + tools_web.get_web_const( 'bm965r0291', resEnv.curLngWeb ) + ' ' +	sAccessTimeStart + tools_web.get_web_const( 'c_enter_time_error2', resEnv.curLngWeb ) + ' ' + sAccessTimeEnd );
+%>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<script language="javascript">
+alert(<%=CodeLiteral( curErrorText )%>);
+</script>
+<%
+				throw '!!is_time_access';
+				break;
+
+			case 'brute_password':
+			{
+				curErrorText = oUserInit.error_text;
+				throw '!!brute_password';
+				break;
+			}
+
+			case 'empty_login':
+			case 'empty_password':
+			{
+				switch ( oUserInit.auth_type )
+				{
+					case 'ntlm':
+						Response.SetWrongAuth( 'basic=0;ntlm=1;' );
+						throw ( '!!' + oUserInit.error_code );
+						break;
+					case 'basic':
+						Response.SetWrongAuth();
+						throw ( '!!' + oUserInit.error_code );
+						break;
+					case 'cookie':
+						if ( tools_web.is_true( Request.Query.GetOptProperty( 'logout' ) ) )
+							break;
+					default:
+						throw ( '!!' + oUserInit.error_code );
+						break;
+				}
+				break;
+			}
+
+			default:
+				switch ( oUserInit.auth_type )
+				{
+					case 'ntlm':
+						Response.SetWrongAuth( 'basic=0;ntlm=1;' );
+						break;
+					case 'basic':
+						Response.SetWrongAuth();
+						break;
+				}
+				throw oUserInit.error_text;
+				break;
+		}
+	}
+
+	Server.Execute( AppDirectoryPath() + "/wt/web/include/host_init.html" );
+
+	if ( curUser != null )
+	{
+		if ( ! curUser.web_enter_date.HasValue )
+		{
+			curUserDoc = OpenDoc( UrlFromDocID( curUserID ) );
+			curUserDoc.TopElem.web_enter_date = CurDate;
+			curUserDoc.Save();
+		}
+
+		if ( curHost.register_logged_in )
+		{
+			if ( Request.Session.GetOptProperty( "logged_in" ) == undefined )
+			{
+				tools_lrs.create_statement( ({
+					'actor': tools_lrs.actor_from_person( curUser ),
+					'verb': {
+						'id': 'https://w3id.org/xapi/adl/verbs/logged-in',
+						'display': {
+							'en': 'logged-in'
+						}
+					},
+					'object': {
+						'objectType': 'Activity',
+						'id': UrlFromDocID( curHost.id ),
+						'definition': {
+							'name': {
+								'en': curHost.name.Value
+							}
+						}
+					}
+				}), null, tools.get_default_object_id( 'learning_storage' ) );
+				Request.Session.logged_in = 1;
+			}
+		}
+	}
+}
+catch( err )
+{
+	if ( ! IsCancelError( err ) )
+	{
+		sRedirectHref = tools_web.set_base_url_path( "/default.html", Env );
+		if ( StrBegins( err, '!!' ) )
+		{
+			if ( StrBegins( err, '!!is_time_access' ) )
+			{
+				sRedirectHref += "?auth_err=2";
+			}
+			else if ( StrBegins( err, '!!brute_password' ) )
+			{
+				sRedirectHref += "?auth_err=3";
+			}
+			else
+			{
+				try
+				{
+					if ( curTemplateMain )
+					{
+						Request.Session.url_prev_auth = tools_web.convert_mode_clean_url( Request.Url );
+					}
+				}
+				catch ( err )
+				{
+				}
+			}
+		}
+		else
+		{
+			LogEvent( 'auth-events', oUserInit.error_code + '\tWEB\t' + oUserInit.auth_login + '\t' + Request.Url );
+			sRedirectHref += "?auth_err=1";
+		}
+%>
+<script language="javascript">
+document.location.href = "<%=sRedirectHref%>" + window.location.hash;
+</script>
+<%
+	}
+	Cancel();
+}
+%>

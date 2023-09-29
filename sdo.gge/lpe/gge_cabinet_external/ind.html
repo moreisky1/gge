@@ -1,0 +1,59 @@
+<script>
+    function setValueFld() {
+        try {
+            oContextU = JSON.parse(WTLP.oFlds.fld_person_context);
+            // Кастомные поля
+            WTLP.oFlds.fld_sex = oContextU.sex;
+            WTLP.oFlds.fld_birthdate = oContextU.birth_date.replace(/(\d{2}).(\d{2}).(\d{4})/, "$3-$2-$1T00:00:00.000Z");
+            WTLP.oFlds.fld_self_reg_org = oContextU.self_reg_org;
+            WTLP.oFlds.fld_educ_level = oContextU.educ_level;
+            WTLP.oFlds.fld_self_reg_pos = oContextU.self_reg_pos;
+            WTLP.oFlds.fld_snils = oContextU.snils;
+            WTLP.oFlds.fld_fio_dat = oContextU.fio_dat;
+            WTLP.oFlds.fld_user_ind = oContextU.user_ind;
+            WTLP.oFlds.fld_city = oContextU.city;
+            WTLP.oFlds.fld_building = oContextU.building;
+            
+            // WTLP.oFlds.fld_direction = oContextU.direction;
+            // WTLP.oFlds.fld_attestat = oContextU.attestat;
+            // WTLP.oFlds.fld_cur_status = oContextU.cur_status;
+            // WTLP.oFlds.fld_date_certification = oContextU.date_certification.replace(/(\d{2}).(\d{2}).(\d{4})/, "$3-$2-$1T00:00:00.000Z");
+            // WTLP.oFlds.fld_data_is_not = oContextU.data_is_not;
+
+            // Файлы
+            $('input[name="fld_educ_scan"]').prev().html(oContextU.educ_scan);
+            $('input[name="fld_educ_decl"]').prev().html(oContextU.educ_decl);
+            $('input[name="fld_educ_change_name"]').prev().html(oContextU.educ_change_name);
+            $('input[name="fld_educ_pass"]').prev().html(oContextU.educ_pass);
+            $('input[name="fld_other"]').prev().html(oContextU.other);
+            $('input[name="fld_snils_scan"]').prev().html(oContextU.snils_scan);
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    var interval;
+    $(document).ready(function () {
+        interval = setInterval(function () {
+            if (WTLP.oFlds.fld_person_context) {
+                setValueFld()
+                if (typeof interval !== 'undefined') {
+                    clearInterval(interval);
+                }
+            }
+            $('input[name="fld_date_certification"]').on('change', function () {
+                if (!$(this).val()) {
+                    $('div#WT_0x63CE684678976AEF div[class="wt-lp-wfld-container disabled"]').removeClass("disabled");
+                } else {
+                    $('div#WT_0x63CE684678976AEF div[class="wt-lp-wfld-container"]').addClass("disabled");
+                    $('div#WT_0x63CE684678976AEF div[class="wt-lp-wfld-container disabled"]').removeAttr('wt-checked');
+                }
+            });
+        }, 20);
+        timeout = setTimeout(() => {
+            if (WTLP.oFlds.fld_date_certification != '') {
+                $('div#WT_0x63CE684678976AEF div[class="wt-lp-wfld-container"]').addClass("disabled");
+                $('div#WT_0x63CE684678976AEF div[class="wt-lp-wfld-container disabled"]').removeAttr('wt-checked');
+            }
+        }, 20);
+    });
+</script>

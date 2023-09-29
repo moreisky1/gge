@@ -1,0 +1,289 @@
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+<script>
+    function isOK(fld) {
+        return fld != '';
+    }
+    function isDate(str) {
+        try {
+            var now = new Date();
+            console.log("now.toLocaleString() " + now.toLocaleString());
+            console.log("isDate " + str);
+            var parms = str.split("-");
+            var yyyy = parseInt(parms[0],10);
+            var mm   = parseInt(parms[1],10);
+            var dd   = parseInt(parms[2],10);
+            var date = new Date(yyyy,mm-1,dd,0,0,0,0);
+            return mm === (date.getMonth()+1) && dd === date.getDate() && yyyy === date.getFullYear();
+        } catch (e) {console.log("e " + e);}
+
+    }
+    function checkFields(stage) {
+        var customFields = [];
+        var res = true;
+        if (stage == '1') {
+            // customFields = [
+            //     "fld_lastname",
+            //     "fld_firstname",
+            //     "fld_middlename",
+            //     "fld_region",
+            //     "fld_city",
+            //     "fld_birthdate",
+            //     "fld_phone",
+            //     "fld_email",
+            //     "fld_status"
+            // ];
+            
+            res = isOK(WTLP.oFlds.fld_lastname) && isOK(WTLP.oFlds.fld_firstname) &&
+            isOK(WTLP.oFlds.fld_middlename) && isOK(WTLP.oFlds.fld_region) &&
+            isOK(WTLP.oFlds.fld_city) && isOK(WTLP.oFlds.fld_birthdate) &&
+            isOK(WTLP.oFlds.fld_phone) && isOK(WTLP.oFlds.fld_email) &&
+            isOK(WTLP.oFlds.fld_status)
+        }
+        if (stage == '2') {
+            // customFields = [
+            //     "fld_university",
+            //     "fld_univercity_custom",
+            //     "fld_educ_level",
+            //     "fld_specialization",
+            //     "fld_educ_year",
+            //     "fld_command_exist",
+            //     "fld_command_name"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_educ_level) && isOK(WTLP.oFlds.fld_specialization) &&
+            isOK(WTLP.oFlds.fld_educ_year) && isOK(WTLP.oFlds.fld_command_exist);
+            if (WTLP.oFlds.fld_command_exist == 'Да') {
+                res = res && isOK(WTLP.oFlds.fld_command_name);
+            }
+            if (!isOK(WTLP.oFlds.fld_university)) {
+                res = res && isOK(WTLP.oFlds.fld_univercity_custom);
+            }
+        }
+        if (stage == '3') {
+            // customFields = [
+            //     "fld_organization",
+            //     "fld_organization_site",
+            //     "fld_organization_role",
+            //     "fld_organization_field",
+            //     "fld_subdivision",
+            //     "fld_position",
+            //     "fld_experience",
+            //     "fld_project_role",
+            //     "fld_area",
+            //     "fld_command_name_3"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_organization) && isOK(WTLP.oFlds.fld_organization_site) &&
+            isOK(WTLP.oFlds.fld_organization_role) && isOK(WTLP.oFlds.fld_organization_field) &&
+            isOK(WTLP.oFlds.fld_subdivision) && isOK(WTLP.oFlds.fld_position) &&
+            isOK(WTLP.oFlds.fld_experience) && isOK(WTLP.oFlds.fld_project_role);
+            if (WTLP.oFlds.fld_project_role == 'Куратор проектной команды') {
+                res = res && isOK(WTLP.oFlds.fld_area) && isOK(WTLP.oFlds.fld_command_name_3);
+            }
+        }
+        if (stage == '4') {
+            // customFields = [
+            //     "fld_collaborator_q1",
+            //     "fld_collaborator_q2",
+            //     "fld_collaborator_q3",
+            //     "fld_collaborator_q4"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_collaborator_q1) && isOK(WTLP.oFlds.fld_collaborator_q2) &&
+            isOK(WTLP.oFlds.fld_collaborator_q3) && isOK(WTLP.oFlds.fld_collaborator_q4);
+        }
+        if (stage == '5') {
+            // customFields = [
+            //     "fld_collaborator_q5",
+            //     "fld_collaborator_q6",
+            //     "fld_collaborator_q7",
+            //     "fld_collaborator_q8",
+            //     "fld_collaborator_q9",
+            //     "fld_collaborator_q10"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_collaborator_q5) && isOK(WTLP.oFlds.fld_collaborator_q6) &&
+            isOK(WTLP.oFlds.fld_collaborator_q7) && isOK(WTLP.oFlds.fld_collaborator_q8) &&
+            isOK(WTLP.oFlds.fld_collaborator_q9) && isOK(WTLP.oFlds.fld_collaborator_q10);
+        }
+        if (stage == '6') {
+            // customFields = [
+            //     "fld_command_exist_6",
+            //     "fld_command_name_6",
+            //     "fld_previous_participant",
+            //     "fld_previous_stage",
+            //     "fld_theme",
+            //     "fld_previous_project_role"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_command_exist_6) && isOK(WTLP.oFlds.fld_previous_participant);
+            if (WTLP.oFlds.fld_command_exist_6 == 'Да') {
+                res = res && isOK(WTLP.oFlds.fld_command_name_6);
+            }
+            if (WTLP.oFlds.fld_previous_participant == 'Да') {
+                res = res && isOK(WTLP.oFlds.fld_previous_stage) && isOK(WTLP.oFlds.fld_theme) && 
+                isOK(WTLP.oFlds.fld_previous_project_role);
+            }
+        }
+        if (stage == '7') {
+            // customFields = [
+            //     "fld_collaborator_q11",
+            //     "fld_collaborator_q12",
+            //     "fld_collaborator_q13",
+            //     "fld_collaborator_q14",
+            //     "fld_collaborator_q15"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_collaborator_q11) && isOK(WTLP.oFlds.fld_collaborator_q12) &&
+            isOK(WTLP.oFlds.fld_collaborator_q13) && isOK(WTLP.oFlds.fld_collaborator_q14) &&
+            isOK(WTLP.oFlds.fld_collaborator_q15);
+        }
+        if (stage == '8') {
+            // customFields = [
+            //     "fld_collaborator_q16",
+            //     "fld_collaborator_q17",
+            //     "fld_collaborator_q18",
+            //     "fld_collaborator_q19",
+            //     "fld_collaborator_q20",
+            //     "fld_collaborator_q21"
+            // ];
+
+            res = isOK(WTLP.oFlds.fld_collaborator_q16) && isOK(WTLP.oFlds.fld_collaborator_q17);
+            if (WTLP.oFlds.fld_collaborator_q17 == 'Да') {
+                res = res && isOK(WTLP.oFlds.fld_collaborator_q18) && isOK(WTLP.oFlds.fld_collaborator_q19) &&
+                isOK(WTLP.oFlds.fld_collaborator_q20) && isOK(WTLP.oFlds.fld_collaborator_q21);
+            }
+        }
+        if (!res) {
+            alert('Заполните все поля');
+            // Swal.fire({
+            //     title: 'Заполните все поля',
+            //     showConfirmButton: false,
+            //     timer: 1500
+            // });
+        }
+        return res;
+    }
+
+    function back(oItem) {
+        var min = 1;
+        var stage = Number(WTLP.oFlds.fld_stage);
+        if (stage > min) {
+            WTLP.oFlds.fld_stage = String(stage - 1);
+            show(WTLP.oFlds.fld_stage);
+        }
+    }
+
+    function forward(oItem) {
+        var stage = Number(WTLP.oFlds.fld_stage);
+        var max = 9;
+
+        if (stage < max && checkFields(stage)) {
+
+            if (WTLP.oFlds.fld_stage == '1') {
+                if (WTLP.oFlds.fld_status == 'Студент или аспирант вуза') {
+                    WTLP.oFlds.fld_stage = '2';
+                } else if (WTLP.oFlds.fld_status == 'Работник организации') {
+                    WTLP.oFlds.fld_stage = '3';
+                }
+            } else if (WTLP.oFlds.fld_stage == '2') {
+                WTLP.oFlds.fld_stage = '7'; //переход на общий блок
+            } else if (WTLP.oFlds.fld_stage == '3') {
+                if (WTLP.oFlds.fld_project_role == 'Участник проекта') { 
+                    WTLP.oFlds.fld_stage = '4';
+                } else if (WTLP.oFlds.fld_project_role == 'Куратор проектной команды') {
+                    WTLP.oFlds.fld_stage = '5';
+                }
+            } else {
+                WTLP.oFlds.fld_stage = String(stage + 1);
+            }
+
+            show(WTLP.oFlds.fld_stage);
+        }
+    }
+    function show(stage) {
+        var arr = [
+            {id: '0x6504326342E3370D', stage: 1},
+            {id: '0x650830FD66922064', stage: 2}, // студент
+            {id: '0x650833591C3560E1', stage: 3}, // работник 1
+            {id: '0x6507F65C615C3601', stage: 4}, // работник 2
+            {id: '0x650869CA0CD94182', stage: 5}, // куратор проектной команды
+            {id: '0x650841AC75AF64AF', stage: 6}, // блок 3
+            {id: '0x65086B0448F37099', stage: 7}, // блок 3
+            {id: '0x65086CFC7AE44924', stage: 8}, // блок 4		
+            {id: '0x650877840A6D2607', stage: 9}, // итог
+        ];
+
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].stage == stage) {
+                $('div#WT_' + arr[i].id).removeClass('is-hidden');
+            } else {
+                $('div#WT_' + arr[i].id).addClass('is-hidden');
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        oContextU = JSON.parse(WTLP.oFlds.fld_context);
+        if (!oContextU.display) {
+            $('div#WT_0x6504326342E3370D').empty().append('<h1>Вы уже подали заявку на участие в проекте "Экспертиза будущего: строим вместе</h1>');
+        }
+        show(WTLP.oFlds.fld_stage);
+        $('select[name="fld_command_exist"]').on('change', function () {
+            if ($(this).val() == "Да") {
+                $('div#WT_0x650832E0344D7411').removeClass('is-hidden');
+            } else {
+                $('div#WT_0x650832E0344D7411').addClass('is-hidden');
+            }
+        });
+        $('select[name="fld_command_exist_6"]').on('change', function () {
+            if ($(this).val() == "Да") {
+                $('div#WT_0x6508425367C6060E').removeClass('is-hidden');
+            } else {
+                $('div#WT_0x6508425367C6060E').addClass('is-hidden');
+            }
+        });
+        $('select[name="fld_previous_participant"]').on('change', function () {
+            if ($(this).val() == "Да") {
+                $('div#WT_0x650844DD09AF09C0').removeClass('is-hidden');
+                $('div#WT_0x6508453808917551').removeClass('is-hidden');
+                $('div#WT_0x650845585F855BB3').removeClass('is-hidden');
+            } else {
+                $('div#WT_0x650844DD09AF09C0').addClass('is-hidden');
+                $('div#WT_0x6508453808917551').addClass('is-hidden');
+                $('div#WT_0x650845585F855BB3').addClass('is-hidden');
+            }
+        });
+        $('select[name="fld_project_role"]').on('change', function () {
+            if ($(this).val() == "Куратор проектной команды") {
+                $('div#WT_0x65085B0B156C2106').removeClass('is-hidden');
+                $('div#WT_0x65085A7D7F914BEE').removeClass('is-hidden');
+            } else {
+                $('div#WT_0x65085B0B156C2106').addClass('is-hidden');
+                $('div#WT_0x65085A7D7F914BEE').addClass('is-hidden');
+            }
+        });
+        $('select[name="fld_collaborator_q17"]').on('change', function () {
+            if ($(this).val() == "Да") {
+                $('div#WT_0x65086DFF62B60C91').removeClass('is-hidden');
+                $('div#WT_0x65086E2362C829BB').removeClass('is-hidden');
+                $('div#WT_0x65086E3D74514B8A').removeClass('is-hidden');
+                $('div#WT_0x65086E5C197B2696').removeClass('is-hidden');	
+            } else {
+                $('div#WT_0x65086DFF62B60C91').addClass('is-hidden');
+                $('div#WT_0x65086E2362C829BB').addClass('is-hidden');
+                $('div#WT_0x65086E3D74514B8A').addClass('is-hidden');
+                $('div#WT_0x65086E5C197B2696').addClass('is-hidden');		
+            }
+        });
+        
+        
+        $('div#WT_0x65087B1C7D424A77').addClass('is-hidden'); // fld_stage
+        $('div#WT_0x651298D44C1D2862').addClass('is-hidden'); // fld_context
+    });
+</script>
+<style>
+    .is-hidden {
+        display: none !important;
+    }
+</style>

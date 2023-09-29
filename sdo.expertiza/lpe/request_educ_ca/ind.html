@@ -1,0 +1,27 @@
+<script>
+    function setValueFld(oContextU) {
+        // Кастомные поля
+        WTLP.oFlds.fld_qualifications = oContextU.qualifications;
+        WTLP.oFlds.fld_subdivisions = oContextU.subdivisions;
+        WTLP.oFlds.fld_position_commons = oContextU.position_commons;
+        WTLP.oFlds.fld_event_name = oContextU.event_name;
+        WTLP.oFlds.fld_event_type = oContextU.event_type;
+        WTLP.oFlds.fld_event_form = oContextU.event_form;
+        WTLP.oFlds.fld_event_period = oContextU.event_period;
+        WTLP.oFlds.fld_base = oContextU.base;
+        WTLP.oFlds.fld_comment = oContextU.comment;
+    }
+    $(document).ready(function () {
+        oContextU = JSON.parse(WTLP.oFlds.fld_context);
+        setValueFld(oContextU);
+        if (!oContextU.display) {
+            // $('div#WT_0x64D27FA3186C3674').addClass('is-hidden'); // Стек вертикальный
+            $('div#WT_0x64D27FA3186C3674').empty().append('<h1>Нет доступа</h1>');
+        }
+    });
+</script>
+<style>
+    .is-hidden {
+        display: none;
+    }
+</style>
