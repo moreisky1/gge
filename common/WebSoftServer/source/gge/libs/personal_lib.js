@@ -13,6 +13,21 @@ function checkID(ID, catalog) {
     }
 }
 
+function addColsToGroups(collaboratorIDs, groupIDs) {
+    for (groupID in groupIDs) {
+        checkID(groupID, "group");
+        docGroup = tools.open_doc(groupID);
+        teGroup = docGroup.TopElem;
+        for (collaboratorID in collaboratorIDs) {
+            checkID(collaboratorID, "collaborator");
+            if (!teGroup.collaborators.ChildByKeyExists(collaboratorID)) {
+                teGroup.collaborators.ObtainChildByKey(collaboratorID);
+            }
+        }
+        docGroup.Save();
+    }
+}
+
 function getPersonFmIDsByPerson(personID) {
     checkID(personID, "collaborator");
     var xq = "for $e in func_managers where catalog = 'collaborator' and object_id = " + personID + " return $e";

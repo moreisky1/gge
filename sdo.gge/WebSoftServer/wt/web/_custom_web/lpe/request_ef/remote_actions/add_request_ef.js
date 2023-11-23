@@ -1,4 +1,4 @@
-// 7277551891597114065  - Обработка кнопок (Заявка на участие в проекте «Экспертиза будущего: строим вместе»)
+﻿// 7277551891597114065  - Обработка кнопок (Заявка на участие в проекте «Экспертиза будущего: строим вместе») - _custom_web/lpe/request_ef/remote_actions/add_request_ef.js
 
 function parse_form_fields(sFormFields) {
     var arrFormFields = undefined;
@@ -15,15 +15,15 @@ function get_form_field(oFields, sName) {
     return catElem == undefined ? "" : catElem.value;
 }
 
-function check_fields(oFormFields, customFields) {
-    var fields = [];
-    for (elem in ArraySelect(customFields, "This.isReq == true")) {
-        if (get_form_field(oFormFields, elem.code) == "") {
-            fields.push(elem.name)
-        }
-    }
-    return ArrayMerge(fields, "This", "; ");
-}
+// function check_fields(oFormFields, customFields) {
+//     var fields = [];
+//     for (elem in ArraySelect(customFields, "This.isReq == true")) {
+//         if (get_form_field(oFormFields, elem.code) == "") {
+//             fields.push(elem.name)
+//         }
+//     }
+//     return ArrayMerge(fields, "This", "; ");
+// }
 
 function newRequest(oFormFields, user) {
     var docRequest = tools.new_doc_by_name("request", false);
@@ -35,6 +35,7 @@ function newRequest(oFormFields, user) {
     teRequest.custom_elems.ObtainChildByKey("fld_lastname").value = get_form_field(oFormFields, "fld_lastname");
     teRequest.custom_elems.ObtainChildByKey("fld_firstname").value = get_form_field(oFormFields, "fld_firstname");
     teRequest.custom_elems.ObtainChildByKey("fld_middlename").value = get_form_field(oFormFields, "fld_middlename");
+    teRequest.custom_elems.ObtainChildByKey("fld_country").value = get_form_field(oFormFields, "fld_country");
     teRequest.custom_elems.ObtainChildByKey("fld_region").value = get_form_field(oFormFields, "fld_region");
     teRequest.custom_elems.ObtainChildByKey("fld_city").value = get_form_field(oFormFields, "fld_city");
     teRequest.custom_elems.ObtainChildByKey("fld_birthdate").value = get_form_field(oFormFields, "fld_birthdate");
@@ -93,7 +94,15 @@ function newRequest(oFormFields, user) {
 try {
     var oFormFields = parse_form_fields(SCOPE_WVARS.GetOptProperty("form_fields"));
     var id = newRequest(oFormFields, curUser);
-    tools.create_notification("eb6", curUserID, "sTextNotif"); // todo expertfuture@gge.ru
+    
+    if (get_form_field(oFormFields, "fld_status") == "Работник организации" && 
+        get_form_field(oFormFields, "fld_project_role") == "Куратор проектной команды"
+    ) {
+        tools.create_notification("eb6_2", curUserID, "sTextNotif");
+    } else {
+        tools.create_notification("eb6", curUserID, "sTextNotif");
+    }
+
     RESULT = {
         command: "alert",
         msg: "Отправлено",

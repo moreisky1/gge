@@ -1,4 +1,4 @@
-<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
 <script>
     function isOK(fld) {
         return fld != '';
@@ -20,11 +20,13 @@
     function checkFields(stage) {
         var customFields = [];
         var res = true;
+        var alert_mes = '';
         if (stage == '1') {
             // customFields = [
             //     "fld_lastname",
             //     "fld_firstname",
             //     "fld_middlename",
+            //     "fld_country",
             //     "fld_region",
             //     "fld_city",
             //     "fld_birthdate",
@@ -34,10 +36,13 @@
             // ];
             
             res = isOK(WTLP.oFlds.fld_lastname) && isOK(WTLP.oFlds.fld_firstname) &&
-            isOK(WTLP.oFlds.fld_middlename) && isOK(WTLP.oFlds.fld_region) &&
+            isOK(WTLP.oFlds.fld_middlename) && isOK(WTLP.oFlds.fld_country) &&
             isOK(WTLP.oFlds.fld_city) && isOK(WTLP.oFlds.fld_birthdate) &&
-            isOK(WTLP.oFlds.fld_phone) && isOK(WTLP.oFlds.fld_email) &&
-            isOK(WTLP.oFlds.fld_status)
+            isOK(WTLP.oFlds.fld_phone) && isOK(WTLP.oFlds.fld_email) && isOK(WTLP.oFlds.fld_status)
+
+            if (WTLP.oFlds.fld_country == 'Российская Федерация') {
+                res = res && isOK(WTLP.oFlds.fld_region) ;
+            }
         }
         if (stage == '2') {
             // customFields = [
@@ -55,6 +60,9 @@
             if (WTLP.oFlds.fld_command_exist == 'Да') {
                 res = res && isOK(WTLP.oFlds.fld_command_name);
             }
+            // else {
+            //     alert_mes = 'Участие в проекте возможно только в команде.<br>Сформируйте команду и подайте заявку на участие в проекте.'
+            // }
             if (!isOK(WTLP.oFlds.fld_university)) {
                 res = res && isOK(WTLP.oFlds.fld_univercity_custom);
             }
@@ -119,6 +127,8 @@
             res = isOK(WTLP.oFlds.fld_command_exist_6) && isOK(WTLP.oFlds.fld_previous_participant);
             if (WTLP.oFlds.fld_command_exist_6 == 'Да') {
                 res = res && isOK(WTLP.oFlds.fld_command_name_6);
+            } else {
+                alert_mes = 'Участие в проекте возможно только в команде.<br>Сформируйте команду и подайте заявку на участие в проекте.'
             }
             if (WTLP.oFlds.fld_previous_participant == 'Да') {
                 res = res && isOK(WTLP.oFlds.fld_previous_stage) && isOK(WTLP.oFlds.fld_theme) && 
@@ -155,24 +165,30 @@
             }
         }
         if (!res) {
-            alert('Заполните все поля');
-            // Swal.fire({
-            //     title: 'Заполните все поля',
-            //     showConfirmButton: false,
-            //     timer: 1500
-            // });
+            Swal.fire({
+                title: 'Заполните все поля',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } else if (alert_mes != '') {
+            Swal.fire({
+                title: alert_mes,
+                showConfirmButton: false,
+                timer: 2500
+            });
+            res = false;
         }
         return res;
     }
 
-    function back(oItem) {
-        var min = 1;
-        var stage = Number(WTLP.oFlds.fld_stage);
-        if (stage > min) {
-            WTLP.oFlds.fld_stage = String(stage - 1);
-            show(WTLP.oFlds.fld_stage);
-        }
-    }
+    // function back(oItem) {
+    //     var min = 1;
+    //     var stage = Number(WTLP.oFlds.fld_stage);
+    //     if (stage > min) {
+    //         WTLP.oFlds.fld_stage = String(stage - 1);
+    //         show(WTLP.oFlds.fld_stage);
+    //     }
+    // }
 
     function forward(oItem) {
         var stage = Number(WTLP.oFlds.fld_stage);
@@ -276,7 +292,13 @@
                 $('div#WT_0x65086E5C197B2696').addClass('is-hidden');		
             }
         });
-        
+        $('select[name="fld_country"]').on('change', function () {
+            if ($(this).val() == "Российская Федерация") {
+                $('div#WT_0x65056E5A72193EA9').removeClass('is-hidden');
+            } else {
+                $('div#WT_0x65056E5A72193EA9').addClass('is-hidden');
+            }
+        });
         
         $('div#WT_0x65087B1C7D424A77').addClass('is-hidden'); // fld_stage
         $('div#WT_0x651298D44C1D2862').addClass('is-hidden'); // fld_context

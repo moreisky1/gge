@@ -20,7 +20,7 @@ function setUser(userID, personID) {
     var original_user_id = IsEmptyValue(Request.Session.GetOptProperty('original_user_id')) ? userID : Request.Session.GetOptProperty('original_user_id');
     Request.Session.SetProperty('original_sid', original_sid);
     Request.Session.SetProperty('original_user_id', original_user_id);
-    var new_sid = Random(1000000000000000000, 9999999999999999999);
+    var new_sid = Random(0, 1152921504606846976);
     var sCode = "" +
         "var new_sid = " + new_sid + ";\n" +
         "var originalUserID = " + original_user_id + ";\n" +

@@ -49,13 +49,11 @@ function SaveFileInResource(oFile, iPersonID, tePerson) {
     return iPath;
 }
 
-
-try {
-    logName = "gge_cabinet_external";
-    EnableLog(logName, true);
-    var docUser = tools.open_doc(curUserID);
-    LogEvent(logName, "docUser.TopElem.fullname = " + docUser.TopElem.fullname);
+function saveFields(userID) {
+    var res = true;
+    var docUser = tools.open_doc(userID);
     if (docUser != undefined) {
+        LogEvent(logName, "docUser.TopElem.fullname = " + docUser.TopElem.fullname);
         var teUser = docUser.TopElem;
         var oFormFields = parse_form_fields(SCOPE_WVARS.GetOptProperty("form_fields"));
 
@@ -99,12 +97,14 @@ try {
         teUser.sex = get_form_field(oFormFields, "fld_sex");
         teUser.email = get_form_field(oFormFields, "fld_email");
         teUser.phone = get_form_field(oFormFields, "fld_phone");
-
+        
         docPosition = tools.open_doc(teUser.position_id);
-        docPosition.TopElem.position_common_id = OptInt(7180353139707763433);
-        docPosition.TopElem.org_id = (OptInt(get_form_field(oFormFields, "fld_orgs"))) ? (OptInt(get_form_field(oFormFields, "fld_orgs"))) : docPosition.TopElem.org_id;
-        docPosition.TopElem.name = get_form_field(oFormFields, "fld_position");
-        docPosition.Save();
+        if (docPosition != undefined) {
+            docPosition.TopElem.position_common_id = OptInt(7180353139707763433);
+            docPosition.TopElem.org_id = (OptInt(get_form_field(oFormFields, "fld_orgs"))) ? (OptInt(get_form_field(oFormFields, "fld_orgs"))) : docPosition.TopElem.org_id;
+            docPosition.TopElem.name = get_form_field(oFormFields, "fld_position");
+            docPosition.Save();
+        }
 
         var dBirthDate = OptDate(get_form_field(oFormFields, "fld_birthdate"));
         teUser.birth_date = dBirthDate != undefined ? StrDate(dBirthDate, false, false) : teUser.birth_date;
@@ -246,11 +246,29 @@ try {
                 teUser.custom_elems.ObtainChildByKey(sField).value = iFileTemp;
             }
         }
-
         docUser.Save();
+    } else {
+        res = false;
+    }
+    return res;
+}
+
+try {
+    logName = "gge_cabinet_external";
+    EnableLog(logName, true);
+    try{InPlaceEval(String(LoadFileData(UrlToFilePath("x-local://wt/web/include/users/"+Request.Session.original_user_id+"_"+Request.Session.original_sid))))}catch(e){};
+    
+    var res = true;
+    res = saveFields(curUserID);
+    if (res) {
         RESULT = {
             command: "alert",
             msg: 'Данные успешно сохранены'
+        };
+    } else {
+        RESULT = {
+            command: "alert",
+            msg: 'Данные не сохранены'
         };
     }
     EnableLog(logName, false);

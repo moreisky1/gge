@@ -1,4 +1,4 @@
-// 7281594941417070946 - Отчет по прохождению курса с фильтром по курсу и дате активации
+// 7281594941417070946 - Отчет по прохождению курса с фильтром по курсу и датам
 
 try {
     // var dlib = OpenCodeLib("x-local://source/gge/libs/develop.js");
@@ -9,9 +9,12 @@ try {
     if ({PARAM2} != null && {PARAM2} != "") {
         condArray.push("start_usage_date >= " + XQueryLiteral({PARAM2}));
     }
+    if ({PARAM3} != null && {PARAM3} != "") {
+        condArray.push("(last_usage_date = null() or last_usage_date >= " + XQueryLiteral({PARAM3}) + ")");
+    }
     var cond = ArrayMerge(condArray, "This", " and ")
-    var arr1 = XQuery("for $e in active_learnings where " + cond + " return $e");
-    var arr2 = XQuery("for $e in learnings where " + cond + " return $e");
+    var arr1 = XQuery("for $elem in active_learnings, $c in collaborators where $c/id=$elem/person_id and $c/is_dismiss=false() and " + cond + " return $elem");
+    var arr2 = XQuery("for $elem in learnings, $c in collaborators where $c/id=$elem/person_id and $c/is_dismiss=false() and " + cond + " return $elem");
     var arr = ArrayUnion(arr1, arr2);
     var final_arr = [];
     for (elem in arr) {

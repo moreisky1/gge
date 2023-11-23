@@ -4,6 +4,12 @@
     return OpenCodeLib(url);
 }
 
+function clearString(str) {
+    var res = undefined;
+    if (checkDataType(str, "String")) res = Trim(UnifySpaces(str))
+    return res;
+}
+
 function getRegExp(pattern) {
     var objRegExp = new ActiveXObject('VBScript.RegExp');
     objRegExp.Global = true;
