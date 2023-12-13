@@ -20,11 +20,13 @@ function getFields(ID) {
         var group = tools.open_doc(teDoc.group_id);
         var project_type_name = project_type == undefined ? "" : project_type.TopElem.name.Value;
         var group_name = group == undefined ? "" : group.TopElem.name.Value;
-
+        var direction = tools.open_doc(teDoc.custom_elems.ObtainChildByKey("f_direction").value.Value);
+        var direction_name = direction == undefined ? "" : direction.TopElem.name.Value
         oRes.context = {
             project_type_name: project_type_name
             , group_name: group_name
             , video: teDoc.custom_elems.ObtainChildByKey("f_videoURL").value.Value
+            , direction_name: direction_name
         };
     }
     return oRes;
