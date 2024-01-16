@@ -1,4 +1,17 @@
-var logName = "7249748132516004951"; // Отправить Уведомление работнику о непройденных адаптационных курсах
+// 7249748132516004951 - Отправить Уведомление работнику о непройденных адаптационных курсах
+
+var logger = {
+    isLog: true,
+    logType: "report",
+    logName: "7249748132516004951",
+}
+
+var libs = OpenCodeLib("x-local://source/gge/libs.js").getAllLibs;
+
+var l = libs.log_lib;
+var d = libs.develop;
+var notif_lib = libs.notif_lib;
+var p = libs.personal_lib;
 
 var courses1 = [ // Отправляем если есть незавершенный, но нет завершенного
     "6638809191131716174", // Противодействие коррупции в ФАУ «Главгосэкспертиза России»
@@ -34,7 +47,7 @@ function getText(personID, courseIDs1, courseIDs2) {
 
 function getActiveLearnings(courseIDs) {
     var condition = "and $elem/person_id = 7241157892942218865 or $elem/person_id = 6769089066357701563";
-    condition = "";
+    condition = " and $col/hire_date >= date('01.07.2023') and $col/hire_date <= date('01.12.2023') ";
     var xq = "for $elem in active_learnings, $col in collaborators where MatchSome($elem/course_id, (" + courseIDs + ")) " +
         " and $col/id = $elem/person_id and $col/is_dismiss = false() and $elem/is_self_enrolled = false() " +
         " and contains($col/current_state, 'Отпуск') = false() " + condition + " return $elem";
@@ -49,12 +62,12 @@ function existLearning(personID, courseID) {
 function getCols(courseIDs1, courseIDs2) {
     var als1 = getActiveLearnings(courseIDs1);
     var cols1 = ArraySelectDistinct(ArrayExtractKeys(ArraySelect(als1, "existLearning(This.person_id, This.course_id)"), "person_id"), "This");
-    LogEvent(logName, "ArrayCount(cols1) = " + ArrayCount(cols1));
+    l.write(logger, "ArrayCount(cols1) = " + ArrayCount(cols1));
     var als2 = getActiveLearnings(courseIDs2);
     var cols2 = ArraySelectDistinct(ArrayExtractKeys(als2, "person_id"), "This");
-    LogEvent(logName, "ArrayCount(cols2) = " + ArrayCount(cols2));
+    l.write(logger, "ArrayCount(cols2) = " + ArrayCount(cols2));
     var cols = ArraySelectDistinct(ArrayUnion(cols1, cols2), "This");
-    LogEvent(logName, "ArrayCount(cols) = " + ArrayCount(cols));
+    l.write(logger, "ArrayCount(cols) = " + ArrayCount(cols));
     return cols;
 }
 
@@ -83,22 +96,23 @@ function add_cols_to_groups(groupIDs, colIDs) {
 }
 
 try {
-    EnableLog(logName, true);
+    l.open(logger);
+
     var cols = getCols(courseIDs1, courseIDs2);
     var col;
     // add_cols_to_groups(["7250511083601225837"], cols);
+    var te;
     for (col in cols) {
-        //LogEvent(logName, getText(col, courseIDs1, courseIDs2));
-        try {
-            tools.create_notification(Param.notification_id, col, getText(col, courseIDs1, courseIDs2));
-            LogEvent(logName, "OK, col = " + col);
-        } catch (er) {
-            LogEvent(logName, "ERROR, col = " + col);
-            continue;
-        }
+        // te = tools.open_doc(col).TopElem;
+        // l.write(logger, te.fullname + " - " + te.position_name + " - " + te.position_parent_name);
+        // l.write(logger, getText(col, courseIDs1, courseIDs2));
+        tools.create_notification(Param.notification_id, col, getText(col, courseIDs1, courseIDs2));
     }
+
+    l.close(logger);
 } catch (error) {
-    LogEvent(logName, ExtractUserError(error));
-} finally {
-    EnableLog(logName, false);
+    logger.isLog = true;
+    l.open(logger);
+    l.write(logger, error);
+    l.close(logger);
 }

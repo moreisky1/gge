@@ -1,7 +1,15 @@
 // 7281594941417070946 - Отчет по прохождению курса с фильтром по курсу и датам
 
 try {
+    // var logger = {
+    //     logType: "report",
+    //     logName: "7281594941417070946",
+    // }
+    // var l = gge.getLib("log_lib");
+    // l.open(logger);
+
     // var dlib = OpenCodeLib("x-local://source/gge/libs/develop.js");
+    var plib = OpenCodeLib("x-local://source/gge/libs/personal_lib.js");
     var condArray = ["1=1"];
     if ({PARAM1} != null && {PARAM1} != "") {
         condArray.push("course_id = " + {PARAM1});
@@ -11,6 +19,11 @@ try {
     }
     if ({PARAM3} != null && {PARAM3} != "") {
         condArray.push("(last_usage_date = null() or last_usage_date >= " + XQueryLiteral({PARAM3}) + ")");
+    }
+    if ({PARAM4} != null && {PARAM4} != "") {
+        arrr = plib.getAllChildSubdivisionIDs(XQueryLiteral({PARAM4}));
+        arrr.push({PARAM4});
+        condArray.push("$c/position_parent_id in (" + ArrayMerge(arrr, "This", ",")  + ")");
     }
     var cond = ArrayMerge(condArray, "This", " and ")
     var arr1 = XQuery("for $elem in active_learnings, $c in collaborators where $c/id=$elem/person_id and $c/is_dismiss=false() and " + cond + " return $elem");
@@ -39,6 +52,7 @@ try {
         obj.state_name = teElem.state_id.ForeignElem.name;
         final_arr.push(obj);
     }
+    // l.close(logger);
     return final_arr;
 } catch (e) {
     var logger = {

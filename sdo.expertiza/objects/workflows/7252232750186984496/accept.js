@@ -1,5 +1,5 @@
 var logger = {
-    isLog: true,
+    isLog: false,
     logType: "report",
     logName: "Включение в состав участников мероприятия - accept",
 }
@@ -54,7 +54,7 @@ l.open(logger);
 
 if (curObject.custom_elems.ObtainChildByKey("part_format").value == "") {
     curObject.custom_elems.ObtainChildByKey("part_format").value = "ВКС";
-    curObject.Doc.Save()
+    //curObject.Doc.Save()
 }
 
 var docEvent = tools.open_doc(curObject.object_id);
