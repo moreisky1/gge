@@ -155,6 +155,7 @@ function doSave(aFields) {
                         sErrMsg += 'email не валидный';
                         sCommand = "alert";
                     }
+                    fldField.Value = oFld.value
                 } else {
                     sErrMsg += 'Пользователь с таким email уже существует';
                     sCommand = "alert";
@@ -371,7 +372,8 @@ else {
                         command: "display_form",
                         title: "Личные данные",
                         form_fields: [
-                            { "name": "__next", "type": "hidden", "value": (global_settings.settings.self_register_disp_custom_elems ? "custom_form" : "save") },
+                            // { "name": "__next", "type": "hidden", "value": (global_settings.settings.self_register_disp_custom_elems ? "custom_form" : "save") },
+                            { "name": "__next", "type": "hidden", "value": "save" },
                             { "name": "lastname", "type": "string", "label": ("Фамилия"), "mandatory": true, "validation": "nonempty" },
                             { "name": "firstname", "type": "string", "label": ("Имя"), "mandatory": true, "validation": "nonempty" },
                             { "name": "middlename", "type": "string", "label": "Отчество" },
@@ -419,9 +421,9 @@ else {
                         RESULT.form_fields.push(oField);
                     }
 
-                    var object = { "name": "access.access_role", "type": "select", "mandatory": true, "label": "Цель регистрации", "entries": [] }
-                    fillingObjectRole(object);
-                    RESULT.form_fields.push(object)
+                    // var object = { "name": "access.access_role", "type": "select", "mandatory": true, "label": "Цель регистрации", "entries": [] }
+                    // fillingObjectRole(object);
+                    // RESULT.form_fields.push(object)
 
                     break;
                 case "custom_form":

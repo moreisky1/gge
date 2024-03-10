@@ -21,7 +21,7 @@ try {
         condArray.push("(last_usage_date = null() or last_usage_date >= " + XQueryLiteral({PARAM3}) + ")");
     }
     if ({PARAM4} != null && {PARAM4} != "") {
-        arrr = plib.getAllChildSubdivisionIDs(XQueryLiteral({PARAM4}));
+        arrr = plib.getAllChildSubdivisionIDs({PARAM4});
         arrr.push({PARAM4});
         condArray.push("$c/position_parent_id in (" + ArrayMerge(arrr, "This", ",")  + ")");
     }
@@ -47,7 +47,7 @@ try {
                 obj.person_parent_subdivision_name = teElem.person_id.ForeignElem.position_parent_id.ForeignElem.parent_object_id.ForeignElem.name;
             }
         } catch (e) {obj.person_parent_subdivision_name = "err"}
-
+        obj.person_subdivision_name = teElem.person_id.ForeignElem.position_parent_id.ForeignElem.name;
         // obj.state_name = common.learning_states[Int(teElem.state_id)].name;
         obj.state_name = teElem.state_id.ForeignElem.name;
         final_arr.push(obj);

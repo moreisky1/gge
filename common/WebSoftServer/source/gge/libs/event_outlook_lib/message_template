@@ -1,0 +1,30 @@
+template = 'X-Mru-BL: 0:0:2
+X-Mru-NR: 1
+X-Mru-OF: unknown (unknown)
+To: WT_RECIPIENT_EMAIL
+Subject: WT_SUBJECT
+MIME-Version: 1.0
+From: WT_SENDER_EMAIL
+Content-Type: multipart/mixed; boundary="=_mixed 004128EAC32576F1_="
+X-Spam: Not detected
+X-Mras: Ok
+
+--=_mixed 004128EAC32576F1_=
+Content-Type: multipart/related; boundary="=_related 004128EAC32576F1_="
+
+--=_related 004128EAC32576F1_=
+Content-Type: multipart/alternative; boundary="=_alternative 004128EAC32576F1_="
+
+--=_alternative 004128EAC32576F1_=
+Content-Type: text/html; method="REQUEST"; charset="utf-8";
+Content-Disposition: inline
+
+WT_HTML
+
+--=_alternative 004128EAC32576F1_=
+Content-Type: text/calendar; method="REQUEST"; charset="utf-8";
+
+WT_ICAL
+
+--=_alternative 004128EAC32576F1_=--
+'

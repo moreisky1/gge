@@ -24,7 +24,7 @@ function existInCatalogByID(catalog, id) {
 }
 
 function existInCatalogByKey(catalog, keyName, keyValue) {
-    return ArrayCount(XQuery("for $elem in " + catalog + "s where $elem/" + keyName + " = '" + keyValue + "' return $elem")) != 0;
+    return ArrayCount(XQuery("for $elem in " + catalog + "s where $elem/" + keyName + " = " + XQueryLiteral(keyValue) + " return $elem")) != 0;
 }
 
 function ceValue(teDoc, ceName) {
@@ -44,11 +44,11 @@ function getNameInCatalogByKey(catalog, keyName, keyValue) {
     var res = "";
     if (existInCatalogByKey(catalog, keyName, keyValue)) {
         if (catalog == "collaborator") {
-            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = '" + keyValue + "' return $e")).fullname.Value;
+            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = " + XQueryLiteral(keyValue) + " return $e")).fullname.Value;
         } else if (catalog == "education_org") {
-            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = '" + keyValue + "' return $e")).disp_name.Value;
+            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = " + XQueryLiteral(keyValue) + " return $e")).disp_name.Value;
         } else {
-            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = '" + keyValue + "' return $e")).name.Value;
+            res = ArrayOptFirstElem(XQuery("for $e in " + catalog + "s where $e/" + keyName + " = " + XQueryLiteral(keyValue) + " return $e")).name.Value;
         }
     }
     return res;

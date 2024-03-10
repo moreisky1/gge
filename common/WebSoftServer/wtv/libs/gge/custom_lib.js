@@ -123,7 +123,7 @@ function GetCustomElems(iObjectIDParam) // 6833359738380905518 - libMain - Об�
                     }
                     foundRes = ArrayOptFirstElem(XQuery("for $e in resources where name='" + String(oCustomElem.value) + "' return $e"))
                     if (foundRes != undefined) {
-                        oCustomElem.value = '<a href="http://sdo.expertiza.ru/download_file.html?file_id=' + foundRes.id.Value + '" target="_blank">' + oCustomElem.value + '</a>'
+                        oCustomElem.value = '<a href="/download_file.html?file_id=' + foundRes.id.Value + '" target="_blank">' + oCustomElem.value + '</a>'
                     }
                 }
                 oRes.result.push(oCustomElem);
