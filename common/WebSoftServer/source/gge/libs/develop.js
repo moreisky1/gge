@@ -4,6 +4,33 @@
     return OpenCodeLib(url);
 }
 
+function getExcelAddress(row, col) {
+    var val;
+    if (row > 0 && col > 0) {
+        var arr = ["-", "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+        val = "";
+        var div = col / 26;
+        var mod = col % 26;
+        if (col < 27) {
+            val += arr[col];
+        } else {
+            if (mod == 0) {
+                val += arr[div - 1];
+                val += arr[col - 26*(div - 1)];
+            } else {
+                val += arr[div];
+                val += arr[mod];
+            }
+        }
+        val += row;
+    }
+    return val;
+}
+
+function ArrayMinus(arr1, arr2) {
+	return ArraySelect(arr1, "ArrayOptFind(arr2, 'Th' + 'is.id == ' + CodeLiteral(This.id) ) == undefined")
+}
+
 function clearString(str) {
     var res = undefined;
     if (checkDataType(str, "String")) res = Trim(UnifySpaces(str))
