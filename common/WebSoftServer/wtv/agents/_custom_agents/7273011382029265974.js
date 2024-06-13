@@ -25,6 +25,8 @@ try {
     var oClient = lib_event.get_smtp_client();
     var attendees = [];
     var xq = "";
+    var subject = "";
+
     for (collaborator in teEvent.collaborators) {
         xq = "for $e in collaborators where $e/id=" + collaborator.collaborator_id.Value + " return $e";
         foundCol = ArrayOptFirstElem(XQuery(xq));
@@ -50,10 +52,15 @@ try {
                 method: method
             };
             sEvent = lib_event.create_event(oIcalConfig);
-        
+            if (method == "REQUEST") {
+                subject = teEvent.name;
+            } else {
+                subject = "Canceled: " + teEvent.name;
+            }
+            
             oMessConfig = {
                 recipient_email: attendee.email,  
-                subject: teEvent.name,
+                subject: subject,
                 sender_email: sSenderAddress,
                 html_body : teEvent.desc,
                 ical : sEvent

@@ -20,8 +20,17 @@ var omps_indicator_value7 = " ";
 var new_mark_text_value8 = " ";
 var omps_indicator_value8 = " ";
 
+var condArray = ["1=1"];
+if ({PARAM1} != null && {PARAM1} != "") {
+    condArray.push("$elem/end_date >= " + XQueryLiteral({PARAM1}));
+}
+if ({PARAM2} != null && {PARAM2} != "") {
+    condArray.push("$elem/end_date <= " + XQueryLiteral({PARAM2}));
+}
+var cond = ArrayMerge(condArray, "This", " and ")
+
 arrFilteredAss = new Array();
-arr_ASSESSM = XQuery("for $as in assessment_appraises where $as/end_date=date('27.04.2024 20:00:00') or $as/end_date=date('26.04.2024 03:00:00') return $as");
+arr_ASSESSM = XQuery("for $elem in assessment_appraises where MatchSome($elem/role_id, (7249616588246769367)) and " + cond + " return $elem");
 // arr_ASSESSM = XQuery("assessment_appraises");
 
          for (elem_ASS in arr_ASSESSM) {
