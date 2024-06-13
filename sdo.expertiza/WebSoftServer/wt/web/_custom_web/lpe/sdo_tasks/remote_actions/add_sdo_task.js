@@ -116,7 +116,7 @@ function doSave(aFields, teDoc) {
 }
 
 logger = {
-    isLog: true,
+    isLog: false,
     logType: "report",
     logName: "7242618299013355360",
 }
@@ -158,7 +158,7 @@ switch (command) {
                             "message": "Измените необходимые данные",
                             "form_fields": ([])
                         });
-                        var colIDs = p.getAllChildSubdivisionPersonIDs(7156931480992233630); // Учебный центр
+                        var colIDs = p.getAllChildSubdivisionPersonIDs(7369945091506369674); // Учебный центр
                         var arr = [
                             {
                                 "name": "sec_object_id"

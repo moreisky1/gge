@@ -11,6 +11,7 @@ function clearAllLibs() {
         , "x-local://source/gge/libs/personal_lib.js"
         , "x-local://source/gge/libs/temp_lib.js"
         , "x-local://source/gge/libs/log_lib.js"
+        , "x-local://source/gge/libs/event_outlook_lib.js"
     ]
     var lib;
     for (lib in dirLibs) {
@@ -33,6 +34,7 @@ function getAllLibs() {
         , "x-local://source/gge/libs/personal_lib.js"
         , "x-local://source/gge/libs/temp_lib.js"
         , "x-local://source/gge/libs/log_lib.js"
+        , "x-local://source/gge/libs/event_outlook_lib.js"
     ]
     for (lib in dirLibs) {
         if (UrlFileName(lib).split(".")[1] == "js") {

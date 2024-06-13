@@ -1,25 +1,32 @@
-// 7260396827121763701 - Дубликаты по ФИО
-
 function isEqual(one, two) {
-    return one == two;
+    return StrLowerCase(one) == StrLowerCase(two);
 }
 
-a = ArraySelectAll(XQuery("for $elem in collaborators where is_dismiss=0 and web_banned=0 order by $elem/fullname return $elem"));
-arr = [];
-final_arr = [];
+var eqField = "fullname";
+if ({PARAM1} != null && {PARAM1} != "") {
+    eqField = {PARAM1};
+}
 
+var condArray = ["1=1"];
+// condArray.push("is_dismiss=false()");
+// condArray.push("web_banned=false()");
+condArray.push("$elem/" + eqField + "!=null()");
+var cond = ArrayMerge(condArray, "This", " and ")
+var a = ArraySelectAll(XQuery("for $elem in collaborators where " + cond + " order by $elem/" + eqField + " return $elem"));
+var arr = [];
+var final_arr = [];
 
 var eqPrev = false;
 var eqNext = false;
 
-if (isEqual(a[0].fullname.Value, a[1].fullname.Value)) {
+if (isEqual(a[0].ChildValue(eqField), a[1].ChildValue(eqField))) {
     eqPrev = true;
     arr.push(a[0]);
 }
 
 var i = 1;
 while (i < ArrayCount(a) - 1) {
-    eqNext = isEqual(a[i].fullname.Value, a[i+1].fullname.Value);
+    eqNext = isEqual(a[i].ChildValue(eqField), a[i+1].ChildValue(eqField));
     if (eqPrev || eqNext) {
         arr.push(a[i]);
     }
@@ -30,7 +37,6 @@ while (i < ArrayCount(a) - 1) {
 if (eqPrev) {
     arr.push(a[ArrayCount(a) - 1]);
 }
-
 
 for (elem in arr) {
     obj = {};
