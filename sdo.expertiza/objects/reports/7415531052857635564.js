@@ -1,9 +1,9 @@
-// 7275316654297389890 - Отчет по децентрализованным заявкам
+// 7415531052857635564 - Отчет по децентрализованным заявкам с фильтром по подразделению
 
 logger = {
-    isLog: false,
+    isLog: true,
     logType: "report",
-    logName: "7275316654297389890",
+    logName: "7415531052857635564",
 }
 var l = OpenCodeLib("x-local://source/gge/libs/log_lib.js");
 var personalLib = OpenCodeLib("x-local://source/gge/libs/personal_lib.js");
@@ -42,8 +42,14 @@ function getDate(date) {
 try {
 l.open(logger);
 
+var subdiv_id = OptInt(_CRITERIONS[0].value)
+var cond2 = subdiv_id == undefined ? "" : " and MatchSome($c/position_parent_id, ("+subdiv_id+")) "
 var cond = " and person_id != 7241157892942218865 and create_date>date('"+Date('08.08.2024')+"')"
-var arr = XQuery("for $e in requests where request_type_id = 7265281441174738432 " + cond + " return $e");
+
+var xq = "for $e in requests, $c in collaborators where $e/person_id=$c/id and $e/request_type_id = 7265281441174738432 " + 
+    cond + cond2 + " return $e"
+l.write(logger, xq);
+var arr = XQuery(xq);
 var final_arr = [];
 
 for (elem in arr) {
@@ -102,3 +108,4 @@ return final_arr;
 l.write(logger, error);
 l.close(logger);
 }
+

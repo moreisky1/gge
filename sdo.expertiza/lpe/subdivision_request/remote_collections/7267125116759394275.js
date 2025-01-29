@@ -1,8 +1,8 @@
 // 7267125116759394275 - Таблица заявок подразделения (Заявка на децентрализованное обучение)
 
 logger = {
-    isLog: true,
-    logType: "ext",
+    isLog: false,
+    logType: "report",
     logName: "7267125116759394275",
 }
 var l = OpenCodeLib("x-local://source/gge/libs/log_lib.js");
@@ -68,30 +68,36 @@ function getRequests(userID) {
     var extraRequests = [];
     if (factSubID != null) colIDs = personalLib.getAllChildSubdivisionPersonIDs(factSubID);
     for (colID in colIDs) {
+        l.write(logger, "colID=" + tools.open_doc(colID).TopElem.fullname)
         xq = "sql: " +
         "SELECT " +
-        "    requests.* " +
-        "FROM requests " +
-        "LEFT JOIN request ON request.id = requests.id " +
-        "WHERE requests.request_type_id = " + requestTypeID +
-        "    AND requests.workflow_state != '0' " +
-        "    AND request.data.value('(request/custom_elems/custom_elem[name=''collaborators''])[1]/value[1]', 'varchar(max)') LIKE '%" + colID + "%' " +
-        "    AND ( request.data.value('(request/custom_elems/custom_elem[name=''subdivision_bosses''])[1]/value[1]', 'varchar(max)') IS NULL " +
-        "    AND request.data.value('(request/custom_elems/custom_elem[name=''department_bosses''])[1]/value[1]', 'varchar(max)') IS NULL ) " +
+        "    dbo.requests.* " +
+        "FROM dbo.requests " +
+        "LEFT JOIN dbo.request ON dbo.request.id = dbo.requests.id " +
+        "WHERE dbo.requests.request_type_id = " + requestTypeID +
+        "    AND dbo.requests.workflow_state != '0' " +
+        // "    AND dbo.requests.status_id = 'active' " +
+        "    AND DATE(dbo.requests.create_date) >= '08.10.2024' " +
+        "    AND (xpath('//request/custom_elems/custom_elem[name=''collaborators'']/value/text()', data))[1]::text LIKE '%" + colID + "%' " +
+        "    AND (xpath('//request/custom_elems/custom_elem[name=''subdivision_bosses'']/value/text()', data))[1]::text IS NULL " +
+        "    AND (xpath('//request/custom_elems/custom_elem[name=''department_bosses'']/value/text()', data))[1]::text IS NULL " +
         "";
         colRequests = XQuery(xq);
+        l.write(logger, "ArrayCount(colRequests)=" + ArrayCount(colRequests))
         requests = ArrayUnion(requests, colRequests);
     }
 
     xq = "sql: " +
     "SELECT " +
-    "    requests.* " +
-    "FROM requests " +
-    "LEFT JOIN request ON request.id = requests.id " +
-    "WHERE requests.request_type_id = " + requestTypeID +
-    "    AND requests.workflow_state != '0' " +
-    "    AND ( request.data.value('(request/custom_elems/custom_elem[name=''subdivision_bosses''])[1]/value[1]', 'varchar(max)') LIKE '%" + userID + "%' " +
-    "    OR request.data.value('(request/custom_elems/custom_elem[name=''department_bosses''])[1]/value[1]', 'varchar(max)') LIKE '%" + userID + "%' ) " +
+    "    dbo.requests.* " +
+    "FROM dbo.requests " +
+    "LEFT JOIN dbo.request ON dbo.request.id = dbo.requests.id " +
+    "WHERE dbo.requests.request_type_id = " + requestTypeID +
+    "    AND dbo.requests.workflow_state != '0' " +
+    // "    AND dbo.requests.status_id = 'active' " +
+    "    AND DATE(dbo.requests.create_date) >= '08.10.2024' " +
+    "    AND ( (xpath('//request/custom_elems/custom_elem[name=''subdivision_bosses'']/value/text()', data))[1]::text LIKE '%" + userID + "%' " +
+    "    OR (xpath('//request/custom_elems/custom_elem[name=''department_bosses'']/value/text()', data))[1]::text LIKE '%" + userID + "%' ) " +
     "";
     extraRequests = XQuery(xq);
 
@@ -117,6 +123,7 @@ try {
         obj = {};
         obj.id = i;
         obj.request_number = i;
+        obj.code = RValue(teDoc.code);
         obj.collaborators = ArrayCount(dlib.ceValue(teDoc, "collaborators").split(";"));
         obj.event_name = dlib.ceValue(teDoc, "event_name");
         if (dlib.ceValue(teDoc, "education_org") != "") {
@@ -129,6 +136,7 @@ try {
         obj.event_cost_sum = OptReal(dlib.ceValue(teDoc, "event_cost")) != undefined ? OptReal(dlib.ceValue(teDoc, "event_cost")) * obj.collaborators : null;
         obj.status_id_name = teDoc.workflow_state_name;
         obj.priority = String(teDoc.workflow_fields.ObtainChildByKey( "priority" ).value);
+        // obj.link = 'http://sdo.expertiza.ru/_wt/' + elem.id
         obj.btn = '<a class="gge_btn_grid gge_btn_start" href="http://sdo.expertiza.ru/_wt/' + elem.id + '" target="_blank">Перейти</a>';
         oRes.array.push(obj);
         i++;
@@ -150,6 +158,6 @@ try {
     l.write(logger, error);
     l.close(logger);
     ERROR = 1;
-    MESSAGE = e;
+    MESSAGE = error;
     RESULT = [];
 }

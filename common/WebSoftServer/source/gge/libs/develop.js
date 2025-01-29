@@ -4,6 +4,15 @@
     return OpenCodeLib(url);
 }
 
+function getAttachedObjectIDs(teDoc, catalogType) {
+    foundCatalog = ArrayOptFind(teDoc.catalogs, "This.type == '" + catalogType + "'")
+    if (foundCatalog == undefined) {
+        return [];
+    } else {
+        return ArrayExtractKeys(foundCatalog.objects, "object_id");
+    }
+}
+
 function getExcelAddress(row, col) {
     var val;
     if (row > 0 && col > 0) {

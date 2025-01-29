@@ -66,9 +66,9 @@ function CreateProgram(xmUserParam, iProgramID, teProgram) {
 }
 
 function getBossIDs(personID) {
-    var bossTypeID = "6870485814160724002"; // Функциональный
-    var subdivisionID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id.Value;
-    var xq = "for $e in func_managers where catalog = 'subdivision' and object_id = " + subdivisionID + 
+    var bossTypeID = "6148914691236517290"; // Непосредственный руководитель
+    // var subdivisionID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id.Value;
+    var xq = "for $e in func_managers where catalog = 'collaborator' and object_id = " + personID + 
         " and boss_type_id = " + bossTypeID + " return $e";
     return ArrayExtractKeys(XQuery(xq), "person_id");
 }
@@ -99,20 +99,27 @@ try {
                 }
             }
             var arrBossIDs = [];
+            var receiver_id;
             var fio = "";
+            var receiver_io = "";
             for (itemCollab in arrCollaborators) {
                 l.write(logger, itemCollab.fullname.Value + ", hire_date = " + itemCollab.hire_date.Value);
                 if (iAssignedTypicatDevProgram != undefined) {
                     docCareerReserve = CreateProgram(itemCollab, iAssignedTypicatDevProgram, teAssignedTypicatDevProgram);
-                    if (docCareerReserve != undefined) {
-                        tePerson = tools.open_doc(docCareerReserve.TopElem.person_id).TopElem;
-                        fio = RValue(tePerson.fullname);
-                        if (bSengNotifiToUser)
-                            tools.create_notification(iUserNotificationType, docCareerReserve.TopElem.person_id, fio, docCareerReserve.DocID);
+                    if (docCareerReserve != undefined) { 
+                        if (bSengNotifiToUser) {
+                            receiver_id = docCareerReserve.TopElem.person_id;
+                            fio = docCareerReserve.TopElem.person_id.sd.fullname.Value;
+                            receiver_io = fio.split(' ')[1] + " " + fio.split(' ')[2];
+                            tools.create_notification(iUserNotificationType, receiver_id, receiver_io, docCareerReserve.DocID);
+                        }
                         if (bSengNotifiToBoss) {
                             arrBossIDs = getBossIDs(RValue(docCareerReserve.TopElem.person_id));
                             for (bossID in arrBossIDs) {
-                                tools.create_notification(iBossNotificationType, bossID, fio, docCareerReserve.DocID);
+                                receiver_id = bossID;
+                                fio = tools.open_doc(bossID).TopElem.fullname.Value;
+                                receiver_io = fio.split(' ')[1] + " " + fio.split(' ')[2];
+                                tools.create_notification(iBossNotificationType, receiver_id, receiver_io, docCareerReserve.DocID);
                             }
                         }
                         if (bSengNotifiToAdmin) {

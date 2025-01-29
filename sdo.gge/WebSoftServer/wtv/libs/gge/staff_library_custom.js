@@ -4447,6 +4447,12 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
         if(sFormCommand == "eval")
         {
             var sTitle, fValue, oFormElem;
+            oFormElem = {
+                name: 'person_id',
+                type: 'hidden',
+                value: iPersonID
+                };
+            arrFormFields.push(oFormElem);
             /*
             if(teResume != null)
             {
@@ -4501,8 +4507,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             }
             */
             
-            // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Основные сведения</h4>'});
-            var arrResumeParam = resume_params(iResumeID, teResume, arrFields);
+            //arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Основные сведения</h4>'});
+			var arrResumeParam = resume_params(iResumeID, teResume, arrFields);
             var iColumnCount = 1;
             
             // due
@@ -4513,7 +4519,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: true,
                 column: 1,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_lastname").value.Value,
                 //multiple: false,
                 //entries: itemField.entries,
                 //catalog: itemField.catalog,
@@ -4530,7 +4537,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "file",
                 mandatory: true,
                 column: 2,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_photo").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -4541,7 +4549,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: true,
                 column: 1,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_firstname").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -4551,7 +4560,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: true,
                 column: 1,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_middlename").value.Value,
             }
             arrFormFields.push(oFormElem);
                         
@@ -4560,7 +4570,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Если изменяли фамилию, имя или отчество, то укажите их, а также когда, где и по какой причине изменяли",
                 type: "text",
                 mandatory: false,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_change_lastname").value.Value,
             }
             arrFormFields.push(oFormElem);
 
@@ -4569,7 +4580,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Число, месяц, год рождения",
                 type: "date",
                 mandatory: true,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_birthday").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -4578,7 +4590,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Место рождения (село, деревня, город, район, область, край, республика, страна)",
                 type: "text",
                 mandatory: true,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_birth_place").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -4587,7 +4600,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Гражданство (если изменяли, то укажите, когда и по какой причине; если имеете гражданство другого государства, укажите)",
                 type: "string",
                 mandatory: true,
-                page: "page_1"
+                page: "page_1",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_citizenship").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -4690,27 +4704,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                          type: "integer",
                         mandatory: true,
                          column: 2
-                     },
-                    {
-                        name: "custom_education_type_id",
-                         label: "Форма обучения",
-                         type: "string",
-                        mandatory: true
-                     },
-                    {
-                        name: "custom_academic_degree",
-                         label: "Ученая степень",
-                         type: "string",
-                        mandatory: false,
-                        column: 1
-                     },
-                    {
-                        name: "custom_academic_heading",
-                         label: "Ученое звание",
-                         type: "string",
-                        mandatory: false,
-                        column: 2
-                     },
+                     }/*,
                     {
                         name: "form",
                          label: "Форма обучения",
@@ -4746,7 +4740,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                          label: "Комментарий",
                          type: "text",
                         mandatory: false
-                     }
+                     }*/
                 ],
                 value: [],
                 page: "page_2"
@@ -4783,7 +4777,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Послевузовское профессиональное образование аспирантура, адъюнктура, докторантура<br>Дополнительное образование<br>Повышение квалификации</h4>', page: "page_2"});
             oFormElem = {
                 name: "projects",
-                label: "Послевузовское профессиональное образование",
+                label: "Послевузовское профессиональное образование аспирантура, адъюнктура, докторантура. Дополнительное образование. Повышение квалификации",
                  type: "array",
                  array: [
                     {
@@ -4858,7 +4852,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // Языки
             oFormElem = {
                 name: "lngs",
-                label: "Иностранные языки",
+                label: "Знание языков - какими иностранными языками и языками народов Российской Федерации владеете и в какой степени",
                  type: "array",
                  array: [
                     {
@@ -4909,10 +4903,9 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4>Выполняемая работа с начала трудовой деятельности (включая учебу в высших и средних специальных учебных заведениях, военную службу, работу по совместительству, работу по договорам гражданско-правового характера, участие в советах директоров (наблюдательных советах), ревизионных комиссиях, коллегиальных исполнительных органах организаций, предпринимательскую деятельность и т.п.)</h4><h5 style="border-bottom: 1px solid #000000;">При заполнении данного пункта необходимо именовать организации так, как они назывались в свое время, военную службу записывать с указанием должности</h5>', page: "page_2"});
             oFormElem = {
                 name: "work_experiences",
-                //label: "Профессиональный опыт",
-                label: "",
-                 type: "array",
-                 array: [
+                label: "Выполняемая работа с начала трудовой деятельности (включая учебу в высших и средних специальных учебных заведениях, военную службу, работу по совместительству, работу по договорам гражданско-правового характера, участие в советах директоров (наблюдательных советах), ревизионных комиссиях, коллегиальных исполнительных органах организаций, предпринимательскую деятельность и т.п.). При заполнении данного пункта необходимо именовать организации так, как они назывались в свое время, военную службу записывать с указанием должности",
+                type: "array",
+                array: [
                     {
                         name: "start_date",
                          label: "Дата поступления",
@@ -5046,7 +5039,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4>Ваши близкие родственники (отец, мать, братья, сестры и дети), а также муж (жена), в том числе бывшие</h4><h5 style="border-bottom: 1px solid #000000;">Если родственники изменяли фамилию, имя, отчество, необходимо также указать их прежние фамилию, имя, отчество</h5>', page: "page_2"});
             oFormElem = {
                 name: "publications",
-                label: "Родственники",
+                label: "Ваши близкие родственники (отец, мать, братья, сестры и дети), а также муж (жена), в том числе бывшие. Если родственники изменяли фамилию, имя, отчество, необходимо также указать их прежние фамилию, имя, отчество",
                  type: "array",
                  array: [
                     {
@@ -5111,11 +5104,12 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Сведения о квалификационном аттестате (при наличии)</h4>', page: "page_3"});
             oFormElem = {
                 name: "attestat_number",
-                label: "Номер аттестата",
+                label: "Номер квалификационного аттестата (при наличии)",
                 type: "string",
                 mandatory: false,
                 column: 1,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_attestat_number").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5125,36 +5119,40 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: false,
                 column: 2,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_attestat_direction").value.Value,
             }
             arrFormFields.push(oFormElem);	
             
             oFormElem = {
                 name: "attestat_date",
-                label: "Дата выдачи аттестата",
+                label: "Дата выдачи квалификационного аттестата",
                 type: "date",
                 mandatory: false,
                 column: 1,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_attestat_date").value.Value,
             }
             arrFormFields.push(oFormElem);
             
             oFormElem = {
                 name: "attestat_period",
-                label: "Срок действия аттестата",
+                label: "Срок действия квалификационного аттестата",
                 type: "date",
                 mandatory: false,
                 column: 2,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_attestat_period").value.Value,
             }
             arrFormFields.push(oFormElem);		
             
             oFormElem = {
                 name: "attestat_reason",
-                label: "Основание выдачи аттестата",
+                label: "Основание выдачи квалификационного аттестата",
                 type: "string",
                 mandatory: false,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_attestat_reason").value.Value,
             }
             arrFormFields.push(oFormElem);
         
@@ -5162,10 +5160,11 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Государственные награды, иные награды и знаки отличия</h4>'});
             oFormElem = {
                 name: "awards",
-                label: "Сведения о наградах",
+                label: "Государственные награды, иные награды и знаки отличия",
                 type: "text",
                 mandatory: false,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_awards").value.Value,
             }
             arrFormFields.push(oFormElem);
                 
@@ -5176,7 +5175,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Привлекались ли Вы к уголовной ответственности? (если привлекались, укажите, когда, и по какой статье УК РФ)",
                 type: "text",
                 mandatory: false,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_criminal").value.Value,
             }
             arrFormFields.push(oFormElem);
 
@@ -5187,7 +5187,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Являетесь ли Вы или Ваши близкие родственники и/или являлись ли ранее учредителем/акционером/бенефициаром организаций, в т.ч. зарубежных?",
                 type: "text",
                 mandatory: false,
-                page: "page_3"
+                page: "page_3",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_beneficiary").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5199,7 +5200,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Отношение к воинской обязанности и воинское звание (номер военного билета, кем и когда выдан, звание)",
                 type: "text",
                 mandatory: false,//false
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_military").value.Value,
             }
             arrFormFields.push(oFormElem);
 
@@ -5211,7 +5213,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "text",
                 mandatory: false,//true,
                 column: 1,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_registration_address").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5221,7 +5224,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "text",
                 mandatory: false,//true,
                 column: 2,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_actual_address").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5231,7 +5235,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: false,//true,
                 column: 1,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_mobile_phone").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5241,7 +5246,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: false,
                 column: 2,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_home_phone").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5251,7 +5257,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: true,//true
                 validation: "email",
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_email").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5259,28 +5266,31 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Паспорт или документ, его заменяющий</h4>'});	
             oFormElem = {
                 name: "passport_num",
-                label: "Серия и номер",
+                label: "Серия и номер паспорта или документа, его заменяющего",
                 type: "string",
                 mandatory: false,//true,
                 column: 1,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_passport_num").value.Value,
             }
             arrFormFields.push(oFormElem);
             oFormElem = {
                 name: "passport_date",
-                label: "Дата выдачи",
+                label: "Дата выдачи паспорта или документа, его заменяющего",
                 type: "date",
                 mandatory: false,//true,
                 column: 2,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_passport_date").value.Value,
             }
             arrFormFields.push(oFormElem);
             oFormElem = {
                 name: "passport_establishment",
-                label: "Орган, выдавший документ",
+                label: "Орган, выдавший паспорт или документ, его заменяющий",
                 type: "text",
                 mandatory: false,//true
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_passport_establishment").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5292,7 +5302,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "string",
                 mandatory: false,
                 column: 1,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_zagran_passport_num").value.Value,
             }
             arrFormFields.push(oFormElem);
             oFormElem = {
@@ -5301,7 +5312,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 type: "date",
                 mandatory: false,
                 column: 2,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_zagran_passport_date").value.Value,
             }
             arrFormFields.push(oFormElem);
             oFormElem = {
@@ -5309,7 +5321,8 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Орган, выдавший заграничный паспорт",
                 type: "text",
                 mandatory: false,
-                page: "page_4"
+                page: "page_4",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_zagran_passport_establishment").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5318,10 +5331,11 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Регистрационный номер в системе индивидуального (персонифицированного) учета (СНИЛС) (если имеется)</h4>'});	
             oFormElem = {
                 name: "snils",
-                label: "Номер СНИЛС",
+                label: "Регистрационный номер в системе индивидуального (персонифицированного) учета (СНИЛС) (если имеется)",
                 type: "string",
                 mandatory: false,
-                page: "page_5"
+                page: "page_5",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_snils").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5329,10 +5343,11 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">ИНН (если имеется)</h4>'});	
             oFormElem = {
                 name: "inn",
-                label: "ИНН",
+                label: "ИНН (если имеется)",
                 type: "string",
                 mandatory: false,
-                page: "page_5"
+                page: "page_5",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_inn").value.Value,
             }
             arrFormFields.push(oFormElem);
             
@@ -5343,15 +5358,17 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
                 label: "Участие в выборных представительных органах, другая информация, которую желаете сообщить о себе",
                 type: "text",
                 mandatory: false,
-                page: "page_5"
+                page: "page_5",
+                value: teResume == null ? "" : teResume.custom_elems.ObtainChildByKey("f_additional").value.Value,
+                
             }
             arrFormFields.push(oFormElem);
             
             //Должность и структурное подразделение
-            // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Сведения о планируемой должности и структурном подразделении</h4><h6>Указанные в настоящей анкете персональные данные своей волей и в своем интересе я предоставляю ФАУ «Главгосэкспертиза России», находящемуся по адресу: 119049, г.Москва, Большая Якиманка, д. 42, стр. 1-2, 3, для рассмотрения меня в качестве кандидата на следующую должность:</h6>'});	
+            // arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4 style="border-bottom: 1px solid #000000;">Сведения о планируемой должности и структурном подразделении</h4>'});	
             oFormElem = {
                 name: "subdivision_name",
-                label: "Структурное подразделение",
+                label: "Сведения о планируемом структурном подразделении",
                 type: "string",
                 mandatory: false,//true,
                 column: 1,
@@ -5360,7 +5377,7 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             arrFormFields.push(oFormElem);
             oFormElem = {
                 name: "position_name",
-                label: "Должность",
+                label: "Сведения о планируемой должности",
                 type: "string",
                 mandatory: false,//true,
                 column: 2,
@@ -5369,9 +5386,10 @@ function AddChangeResume(sFormCommand, sFormFields, iResumeID, iPersonID)
             arrFormFields.push(oFormElem);
             
             //Дополнительная информация
-            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4>ФАУ «Главгосэкспертиза России» разрешено осуществлять следующие операции по обработке указанных персональных данных с использованием и без использования средств автоматизации: сбор, запись, систематизацию, хранение, использование, уточнение, удаление, уничтожение.</h4>', page: "page_5"});	
-            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4>Согласие на обработку указанных в настоящей анкете персональных данных дано на срок проведения мероприятий по оценке меня как кандидата, а в случае заключения трудового договора по результатам оценки – до окончания действия трудового договора.</h4>', page: "page_5"});	
-            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h4>На рассмотрение предоставленных мною сведений согласен (согласна).</h4>', page: "page_5"});	
+			arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h5>Указанные в настоящей анкете персональные данные своей волей и в своем интересе я предоставляю ФАУ «Главгосэкспертиза России», находящемуся по адресу: 119049, г.Москва, Большая Якиманка, д. 42, стр. 1-2, 3.</h5>', page: "page_5"});
+            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h5>ФАУ «Главгосэкспертиза России» разрешено осуществлять следующие операции по обработке указанных персональных данных с использованием и без использования средств автоматизации: сбор, запись, систематизацию, хранение, использование, уточнение, удаление, уничтожение.</h5>', page: "page_5"});	
+            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h5>Согласие на обработку указанных в настоящей анкете персональных данных дано на срок проведения мероприятий по оценке меня как кандидата, а в случае заключения трудового договора по результатам оценки – до окончания действия трудового договора.</h5>', page: "page_5"});	
+            arrFormFields.push({name: 'paragraph_main', type: 'paragraph', value: '<h5>На рассмотрение предоставленных мною сведений согласен (согласна).</h5>', page: "page_5"});	
             
             var sFormTitle = "Анкета кандидата";//teResume != null ? "Изменение резюме" : "Создание резюме";
             var oForm = {
@@ -5547,7 +5565,7 @@ function set_resume(docResume, oFormField, arrFields)
     //teResume.academic_heading = oFormField.GetOptProperty('academic_heading');
     //due
     docResume.Save();
-    return {command: "close_form", msg: sFinalMsg, confirm_result : { command: "redirect", redirect_url: "https://kb.gge.ru/_wt/request_complete/" }};
+    return {command: "close_form", msg: sFinalMsg, confirm_result : { command: "redirect", redirect_url: "https://kb.gge.ru/_wt/gge_candidate/" + docResume.DocID }};
     //return {command: "close_form", msg: sFinalMsg, confirm_result : { command: "reload_page" }};
 }
 

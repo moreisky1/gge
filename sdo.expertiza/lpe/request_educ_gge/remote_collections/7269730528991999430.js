@@ -2,7 +2,7 @@
 
 logger = {
     isLog: true,
-    logType: "ext",
+    logType: "report",
     logName: "7269730528991999430",
 }
 

@@ -2,7 +2,7 @@
 
 logger = {
     isLog: true,
-    logType: "ext",
+    logType: "report",
     logName: "7267463972231149647",
 }
 var l = OpenCodeLib("x-local://source/gge/libs/log_lib.js");
@@ -32,6 +32,7 @@ function getFactSubID(userID, factRole) {
     var subdivisionID = tools.get_doc_by_key("collaborator", "id", userID).TopElem.position_parent_id;
     var parentSubdivisionID = personalLib.getParentSubdivisionID(subdivisionID);
     var subdivisionRole = personalLib.getSubdivisionRole(subdivisionID);
+    l.write(logger, "subdivisionRole="+subdivisionRole)
     if (factRole == "subdivision_boss") {
         if (subdivisionRole == "subdivision") {
             factSubID = subdivisionID;
@@ -63,27 +64,31 @@ function getRequests(userID) {
         for (colID in colIDs) {
             xq = "sql: " +
             "SELECT " +
-            "    requests.* " +
-            "FROM requests " +
-            "LEFT JOIN request ON request.id = requests.id " +
-            "WHERE requests.request_type_id = " + requestTypeID +
-            "    AND requests.workflow_state != '0' " +
-            "    AND request.data.value('(request/custom_elems/custom_elem[name=''collaborators''])[1]/value[1]', 'varchar(max)') LIKE '%" + colID + "%' " +
-            "    AND ( request.data.value('(request/custom_elems/custom_elem[name=''subdivision_bosses''])[1]/value[1]', 'varchar(max)') IS NULL " +
-            "    AND request.data.value('(request/custom_elems/custom_elem[name=''department_bosses''])[1]/value[1]', 'varchar(max)') IS NULL ) " +
+            "    dbo.requests.* " +
+            "FROM dbo.requests " +
+            "LEFT JOIN dbo.request ON dbo.request.id = dbo.requests.id " +
+            "WHERE dbo.requests.request_type_id = " + requestTypeID +
+            "    AND dbo.requests.workflow_state != '0' " +
+            // "    AND dbo.requests.status_id = 'active' " +
+            "    AND DATE(dbo.requests.create_date) >= '08.19.2024' " +
+            "    AND (xpath('//request/custom_elems/custom_elem[name=''collaborators'']/value/text()', data))[1]::text LIKE '%" + colID + "%' " +
+            "    AND (xpath('//request/custom_elems/custom_elem[name=''subdivision_bosses'']/value/text()', data))[1]::text IS NULL " +
+            "    AND (xpath('//request/custom_elems/custom_elem[name=''department_bosses'']/value/text()', data))[1]::text IS NULL " +
             "";
             colRequests = XQuery(xq);
             requests = ArrayUnion(requests, colRequests);
         }
         xq = "sql: " +
         "SELECT " +
-        "    requests.* " +
-        "FROM requests " +
-        "LEFT JOIN request ON request.id = requests.id " +
-        "WHERE requests.request_type_id = " + requestTypeID +
-        "    AND requests.workflow_state != '0' " +
-        "    AND ( request.data.value('(request/custom_elems/custom_elem[name=''subdivision_bosses''])[1]/value[1]', 'varchar(max)') LIKE '%" + userID + "%' " +
-        "    OR request.data.value('(request/custom_elems/custom_elem[name=''department_bosses''])[1]/value[1]', 'varchar(max)') LIKE '%" + userID + "%' ) " +
+        "    dbo.requests.* " +
+        "FROM dbo.requests " +
+        "LEFT JOIN dbo.request ON dbo.request.id = dbo.requests.id " +
+        "WHERE dbo.requests.request_type_id = " + requestTypeID +
+        "    AND dbo.requests.workflow_state != '0' " +
+        // "    AND dbo.requests.status_id = 'active' " +
+        "    AND DATE(dbo.requests.create_date) >= '08.19.2024' " +
+        "    AND ( (xpath('//request/custom_elems/custom_elem[name=''subdivision_bosses'']/value/text()', data))[1]::text LIKE '%" + userID + "%' " +
+        "    OR (xpath('//request/custom_elems/custom_elem[name=''department_bosses'']/value/text()', data))[1]::text LIKE '%" + userID + "%' ) " +
         "";
         extraRequests = XQuery(xq);
     
@@ -125,15 +130,17 @@ function getFields(userID) {
     }
     try {
         l.open(logger);
-
+        l.write(logger, "userID="+userID);
+        l.write(logger, "DataType(userID)="+DataType(userID));
         var budget = getBudget(userID);
+        l.write(logger, budget);
         var wasted = getWasted(userID);
         var budgetMsg = "";
         var wastedMsg = "";
-        if (budget != undefined) {
+        if (budget != undefined && budget != 0) {
             budgetMsg = "Бюджет подразделения: " + StrReplace(String(budget), ".", ",") + " руб.";
             if (budget < wasted) {
-                wastedMsg = "Бюджет заявок " + StrReplace(String(wasted), ".", ",") + " руб. превышает бюджет подразделения на обучение!";
+                wastedMsg = "Бюджет заявок " + StrReplace(String(StrReal(wasted, 2, true)), ".", ",") + " руб. превышает бюджет подразделения на обучение!";
             }
         }
 
@@ -144,11 +151,11 @@ function getFields(userID) {
 
         l.close(logger);
         return oRes;
-    } catch (err) {
+    } catch (error) {
         l.write(logger, error);
         l.close(logger);
         oRes.error = 503;
-        oRes.errorText = "oshipga " + err;
+        oRes.errorText = "oshipga " + error;
         return oRes;
     }
 }

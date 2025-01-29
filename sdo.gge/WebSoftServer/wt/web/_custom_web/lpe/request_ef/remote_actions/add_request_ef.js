@@ -25,7 +25,9 @@ function get_form_field(oFields, sName) {
 //     return ArrayMerge(fields, "This", "; ");
 // }
 
-function newRequest(oFormFields, user) {
+function newRequest(oFormFields) {
+    var ya = 7036400859652491004; // Пользователь базы знаний
+    user = tools.open_doc(ya).TopElem;
     var docRequest = tools.new_doc_by_name("request", false);
     docRequest.BindToDb(DefaultDb);
     var teRequest = docRequest.TopElem;
@@ -93,14 +95,14 @@ function newRequest(oFormFields, user) {
 
 try {
     var oFormFields = parse_form_fields(SCOPE_WVARS.GetOptProperty("form_fields"));
-    var id = newRequest(oFormFields, curUser);
+    var id = newRequest(oFormFields);
     
     if (get_form_field(oFormFields, "fld_status") == "Работник организации" && 
         get_form_field(oFormFields, "fld_project_role") == "Куратор проектной команды"
     ) {
-        tools.create_notification("eb6_2", curUserID, "sTextNotif");
+        // tools.create_notification("eb6_2", curUserID, "sTextNotif");
     } else {
-        tools.create_notification("eb6", curUserID, "sTextNotif");
+        // tools.create_notification("eb6", curUserID, "sTextNotif");
     }
 
     RESULT = {

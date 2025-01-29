@@ -2,7 +2,7 @@
 
 logger = {
     isLog: true,
-    logType: "ext",
+    logType: "report",
     logName: "7269738612966110179",
 }
 var l = gge.getLib("log_lib");
@@ -100,7 +100,7 @@ function sendEmails(objectID) {
     var bossTypeID = "7070444973261573463"; // Ответственный за обучение
     bossTypeID = undefined;
     var person1 = getFirstCol(teRequest);
-    var subdivisionID = tools.get_doc_by_key("collaborator", "id", person1).TopElem.position_parent_id;
+    var subdivisionID = tools.get_doc_by_key("collaborator", "id", OptInt(person1)).TopElem.position_parent_id;
     var parentSubdivisionID = personalLib.getParentSubdivisionID(subdivisionID);
     var recipientIDs = [];
     var subdivision_bosses = dlib.ceValue(teRequest, "subdivision_bosses");

@@ -7,7 +7,7 @@
 function checkID(ID, catalog) {
     var dlib = OpenCodeLib("x-local://source/gge/libs/develop.js");
     if (OptInt(ID) != undefined && dlib.checkDataType(OptInt(ID), "Integer")) {
-        if (!dlib.existInCatalogByID(catalog, ID)) throw ID + " NOT IN " + catalog;
+        if (!dlib.existInCatalogByID(catalog, OptInt(ID))) throw ID + " NOT IN " + catalog;
     } else {
         throw ID + " IS NOT ID";
     }
@@ -60,7 +60,7 @@ function isUserPersonFmByPerson(userID, personID) {
 function isUserPersonFmBySubdivision(userID, personID) {
     checkID(userID, "collaborator");
     checkID(personID, "collaborator");
-    var subdivisionID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id.Value;
+    var subdivisionID = tools.get_doc_by_key("collaborator", "id", OptInt(personID)).TopElem.position_parent_id.Value;
     var xq = "for $e in func_managers where catalog = 'subdivision' and object_id = " + subdivisionID +
     " and person_id = " + userID + " return $e";
     return ArrayCount(XQuery(xq)) != 0;
@@ -69,7 +69,7 @@ function isUserPersonFmBySubdivision(userID, personID) {
 function isUserPersonFmByPosition(userID, personID) {
     checkID(userID, "collaborator");
     checkID(personID, "collaborator");
-    var subdivisionID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id.Value;
+    var subdivisionID = tools.get_doc_by_key("collaborator", "id", OptInt(personID)).TopElem.position_parent_id.Value;
     var xq = "for $e in func_managers where catalog = 'position' and parent_id = " + subdivisionID +
     " and person_id = " + userID + " return $e";
     return ArrayCount(XQuery(xq)) != 0;
@@ -165,13 +165,13 @@ function getAllChildSubdivisionIDs(subdivID) {
 
 function isSubdivisionFromCA(subdivID) {
     checkID(subdivID, "subdivision");
-    return String(getRootSubdivisionID(subdivID)) == "7156931433189943821"; // ФАУ "Главгосэкспертиза России"
+    return String(getRootSubdivisionID(subdivID)) == "7369945090447834449"; // Центральный аппарат
 }
 
 function isPersonFromCA(personID) {
     checkID(personID, "collaborator");
-    var subdivID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id.Value;
-    return String(getRootSubdivisionID(subdivID)) == "7156931433189943821"; // ФАУ "Главгосэкспертиза России"
+    var subdivID = tools.get_doc_by_key("collaborator", "id", OptInt(personID)).TopElem.position_parent_id.Value;
+    return String(getRootSubdivisionID(subdivID)) == "7369945090447834449"; // Центральный аппарат
 }
 
 function isPersonSubdivisionFm(personID, subdivID, bossTypeID) {
@@ -211,16 +211,17 @@ function getUserRolesForPerson(userID, personID, bossTypeID) { // var bossTypeID
     checkID(personID, "collaborator");
     var userRoles = [];
     var isPersonFromCA = isPersonFromCA(personID);
-    var subdivisionID = tools.get_doc_by_key("collaborator", "id", personID).TopElem.position_parent_id;
+    var subdivisionID = tools.get_doc_by_key("collaborator", "id", OptInt(personID)).TopElem.position_parent_id;
     var isPersonSubdivisionFm = isPersonSubdivisionFm(userID, subdivisionID, bossTypeID);
     var parentSubdivisionID = getParentSubdivisionID(subdivisionID);
-    var isPersonParentSubdivisionFm = isPersonSubdivisionFm(userID, parentSubdivisionID, bossTypeID);
+    var isPersonParentSubdivisionFm;
     var subdivisionLevel = getSubdivisionLevel(subdivisionID);
     if (isPersonFromCA) {
         if (subdivisionLevel == 2) {
             if (isPersonSubdivisionFm) {
                 userRoles.push("department_boss");
             }
+            isPersonParentSubdivisionFm = isPersonSubdivisionFm(userID, parentSubdivisionID, bossTypeID);
             if (isPersonParentSubdivisionFm) {
                 userRoles.push("subdivision_boss");
             }
@@ -234,6 +235,7 @@ function getUserRolesForPerson(userID, personID, bossTypeID) { // var bossTypeID
             if (isPersonSubdivisionFm) {
                 userRoles.push("department_boss");
             }
+            isPersonParentSubdivisionFm = isPersonSubdivisionFm(userID, parentSubdivisionID, bossTypeID);
             if (isPersonParentSubdivisionFm) {
                 userRoles.push("subdivision_boss");
             }
@@ -270,7 +272,7 @@ function getSubdivisionRole(subdivID) {
 function getSubdivisionBudget(subdivID) {
     checkID(subdivID, "subdivision");
     var budget;
-    var costCenterID = tools.get_doc_by_key("subdivision", "id", subdivID).TopElem.cost_center_id.Value;
-    if (costCenterID != null) budget = tools.get_doc_by_key("budget", "cost_center_id", costCenterID).TopElem.cost.Value;
+    var costCenterID = tools.get_doc_by_key("subdivision", "id", OptInt(subdivID)).TopElem.cost_center_id.Value;
+    if (costCenterID != null) budget = tools.get_doc_by_key("budget", "cost_center_id", OptInt(costCenterID)).TopElem.cost.Value;
     return budget;
 }

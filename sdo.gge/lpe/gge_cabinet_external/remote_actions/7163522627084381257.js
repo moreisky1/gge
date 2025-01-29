@@ -1,5 +1,12 @@
 // 7163522627084381257 - Главгосэкспертиза. Личный кабинет (внешний портал). Редактирование личных данных
 
+// logger = {
+//     isLog: true,
+//     logType: "report",
+//     logName: "7163522627084381257",
+// }
+// var l = gge.getLib("log_lib");
+
 function parse_form_fields(sFormFields) {
     var arrFormFields = undefined;
     try {
@@ -54,6 +61,7 @@ function saveFields(userID) {
     var docUser = tools.open_doc(userID);
     if (docUser != undefined) {
         LogEvent(logName, "docUser.TopElem.fullname = " + docUser.TopElem.fullname);
+        // l.write(logger, "docUser.TopElem.fullname = " + docUser.TopElem.fullname)
         var teUser = docUser.TopElem;
         var oFormFields = parse_form_fields(SCOPE_WVARS.GetOptProperty("form_fields"));
 
@@ -254,8 +262,9 @@ function saveFields(userID) {
 }
 
 try {
-    logName = "gge_cabinet_external";
+    logName = "gge_cabinet_external"
     EnableLog(logName, true);
+    // l.open(logger);
     try{InPlaceEval(String(LoadFileData(UrlToFilePath("x-local://wt/web/include/users/"+Request.Session.original_user_id+"_"+Request.Session.original_sid))))}catch(e){};
     
     var res = true;
@@ -271,12 +280,15 @@ try {
             msg: 'Данные не сохранены'
         };
     }
+    // l.write(logger, curUser.fullname);
+    // l.close(logger);
+} catch (error) {
+    LogEvent(logName, error);
     EnableLog(logName, false);
-} catch (err) {
-    LogEvent(logName, ExtractUserError(err));
-    EnableLog(logName, false);
+    // l.write(logger, error);
+    // l.close(logger);
     RESULT = {
         command: "alert",
-        msg: ExtractUserError(err)
+        msg: error
     };
 }
